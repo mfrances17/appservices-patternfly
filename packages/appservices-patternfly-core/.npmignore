@@ -1,7 +1,0 @@
-.*
-**/tsconfig.json
-**/webpack.config.js
-**/tslint.json
-
-node_modules
-src
