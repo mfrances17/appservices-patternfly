@@ -16,8 +16,8 @@ import {
   DropdownToggle,
   DropdownPosition,
 } from "@patternfly/react-core";
-import { HelpContext } from "../help-enabler/HelpHeader"
-import { ExternalLink } from "../external-link/ExternalLink";
+import { HelpContext } from "./components/help-enabler/HelpHeader"
+import { ExternalLink } from "./components/external-link/ExternalLink";
 import { useTranslation } from "react-i18next";
 
 export interface ViewHeaderProps {
