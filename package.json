@@ -19,11 +19,13 @@
     "build": "lerna run build",
     "buildDoc": "lerna run buildDoc",
     "start:dev": "lerna run start:dev",
-    "start:demo": "lerna run start:demo",
-    "start:demo2": "PORT=3006 lerna run start:demo"
+    "start:demo": "lerna run start:demo"
   },
   "devDependencies": {
     "lerna": "3.20.2"
   },
-  "name": "appservices-patternfly"
+  "name": "appservices-patternfly",
+  "dependencies": {
+    "tslint": "^6.1.3"
+  }
 }

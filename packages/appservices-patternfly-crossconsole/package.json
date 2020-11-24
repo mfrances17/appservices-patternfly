@@ -24,7 +24,9 @@
     "@patternfly/react-icons": "4.5.0",
     "@rh-uxd/appservices-patternfly-core": "2.0.0",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "i18next": "^19.6.2",
+    "react-i18next": "^11.7.0"
   },
   "devDependencies": {
     "@types/react": "16.9.35",

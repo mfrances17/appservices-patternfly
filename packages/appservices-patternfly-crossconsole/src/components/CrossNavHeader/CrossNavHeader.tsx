@@ -1,22 +1,54 @@
-import * as React from 'react';
+import React, { ReactElement } from 'react';
 import styles from '@patternfly/react-styles/css/components/Page/page';
 import { css } from '@patternfly/react-styles';
 import { BarsIcon } from '@patternfly/react-icons';
-import { Button, ButtonVariant, PageHeaderProps, PageContextConsumer } from '@patternfly/react-core';
-import { CrossNavApp, CrossNavAppState, getAppNavState, setAppNavState, navigateToApp } from '@rh-uxd/appservices-patternfly-core';
-import { CrossNavContextSelector, CrossNavContextSelectorItem } from '../CrossNavContextSelector';
+import {ExternalLink} from '../ExternalLink';
+// import { Button, ButtonVariant, ButtonProps, PageHeaderProps, PageContextConsumer } from '@patternfly/react-core';
+import {
+  Text,
+  PageSection,
+  TextContent,
+  Divider,
+  Level,
+  LevelItem,
+  // existing prop
+  PageHeaderProps,
+  Switch,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+  Badge,
+  ButtonProps,
+  Dropdown,
+  DropdownToggle,
+  DropdownPosition,
+} from "@patternfly/react-core";
+// import { CrossNavApp, CrossNavAppState, getAppNavState, setAppNavState, navigateToApp } from '@rh-uxd/appservices-patternfly-core';
+// import { CrossNavContextSelector, CrossNavContextSelectorItem } from '../CrossNavContextSelector';
 
 export interface CrossNavHeaderProps extends PageHeaderProps {
   /** Application data for applications shown in the cross console navigation.  Note if a protocol is not specified to use when navigating for an app, it will default to https*/
-  apps: CrossNavApp[] | null;
-  currentApp: CrossNavApp | null;
-  onAppNavigate?: (app: CrossNavApp
-    ) => void;
+  // apps: CrossNavApp[] | null;
+  // currentApp: CrossNavApp | null;
+  // onAppNavigate?: (app: CrossNavApp) => void;
+
+  // props added from ViewHeader
+  titleKey: string;
+  badge?: string;
+  subKey: string;
+  subKeyLinkProps?: ButtonProps;
+  dropdownItems?: ReactElement[];
+  lowerDropdownItems?: any;
+  lowerDropdownMenuTitle?: any;
 }
 
 interface CrossNavHeaderState {
   readonly isOpen: boolean;
-  readonly initalLoad: boolean;
+  // readonly initalLoad: boolean;
+
+  // state added from ViewHeader
+  isEnabled?: boolean;
+  onToggle?: (value: boolean) => void;
 }
 
 export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNavHeaderState> {
@@ -25,7 +57,7 @@ export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNa
     super(props);
     this.state = {
       isOpen: false,
-      initalLoad: true
+      // initalLoad: true
     }
   }
   /** 
@@ -35,9 +67,9 @@ export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNa
    * @param userId - Uniquie identifer for the user.  Defaults to no user.
    * @param appState - Object containing the current state of the application.
    */
-  static setAppNavState(appId: string, userId: string = '', appState: CrossNavAppState) {
-    setAppNavState(appId, userId, appState);
-  }
+  // static setAppNavState(appId: string, userId: string = '', appState: CrossNavAppState) {
+  //   setAppNavState(appId, userId, appState);
+  // }
 
   /**
    * Retrieves the last known URL and state date for the user of the specified app.
@@ -47,9 +79,9 @@ export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNa
    * 
    * @returns Saved application state retrieved from local storage.
    */
-   static getAppNavState(appId: string, userId: string = ''): CrossNavAppState {
-     return getAppNavState(appId, userId);
-  }
+  //  static getAppNavState(appId: string, userId: string = ''): CrossNavAppState {
+  //    return getAppNavState(appId, userId);
+  // }
 
   private onToggle = (event: any, isOpen: boolean) => {
     this.setState({
@@ -57,20 +89,21 @@ export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNa
     });
   };
 
-  private onSelect = (event: any, app: CrossNavApp) => {
-    if (this.props.onAppNavigate) {
-      this.props.onAppNavigate(app);
-    }
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-    navigateToApp(this.props.currentApp, app);
-  }
+  // private onSelect = (event: any, app: CrossNavApp) => {
+  //   if (this.props.onAppNavigate) {
+  //     this.props.onAppNavigate(app);
+  //   }
+  //   this.setState({
+  //     isOpen: !this.state.isOpen
+  //   });
+  //   navigateToApp(this.props.currentApp, app);
+  // }
 
   render() {
 
-    const { apps = null,
-      currentApp,
+    const { 
+      // apps = null,
+      // currentApp,
       className = '',
       logo = null as React.ReactNode,
       logoProps = null as object,
@@ -85,55 +118,97 @@ export class CrossNavHeader extends React.Component<CrossNavHeaderProps, CrossNa
 
     const LogoComponent = logoComponent as any;
 
-    const {
-      isOpen
-    } = this.state;
+    const { isOpen } = this.state;
 
-    return (
-      <PageContextConsumer>
-        {({ isManagedSidebar, onNavToggle: managedOnNavToggle, isNavOpen: managedIsNavOpen }: PageHeaderProps) => {
-          const navToggle = isManagedSidebar ? managedOnNavToggle : onNavToggle;
-          const navOpen = isManagedSidebar ? managedIsNavOpen : isNavOpen;
-          const isCrossConsole = apps && apps.length > 0 && true;
-
-          return (
-            <header role="banner" className={`${css(styles.pageHeader, className)} ${!showNavToggle ? 'pf-m-no-toggle' : ''} ${!isCrossConsole && `pf-m-no-crossconsole`} `} {...props}>
-              {showNavToggle && (
-                <div className={css(styles.pageHeaderBrandToggle)}>
-                  <Button
-                    id="nav-toggle"
-                    onClick={navToggle}
-                    aria-label={ariaLabel}
-                    aria-controls="page-sidebar"
-                    aria-expanded={navOpen ? 'true' : 'false'}
-                    variant={ButtonVariant.plain}
+      return (
+        <>
+          <PageSection variant="light">
+            <Level hasGutter>
+              <LevelItem>
+                <Level>
+                  <LevelItem>
+                    <TextContent className="pf-u-mr-sm">
+                      <Text component="h1">{props.titleKey}</Text>
+                      {/* <Text component="h1">H1 Header</Text> */}
+                    </TextContent>
+                  </LevelItem>
+                  {props.badge && (
+                    <LevelItem>
+                      <Badge>{props.badge}</Badge>
+                    </LevelItem>
+                  )}
+                </Level>
+              </LevelItem>
+              <LevelItem></LevelItem>
+              {/* <LevelItem>
+                <Toolbar>
+                  <ToolbarContent>
+                    {props.onToggle && (
+                      <ToolbarItem>
+                        <Switch
+                          id={`${props.titleKey}-switch`}
+                          label={"Enabled"}
+                          labelOff={("Disabled")}
+                          className="pf-u-mr-lg"
+                          isChecked={props.isEnabled}
+                          onChange={(value) => {
+                            if (props.onToggle) {
+                              props.onToggle(value);
+                            }
+                          }}
+                        />
+                      </ToolbarItem>
+                    )}
+                    {props.dropdownItems && (
+                      <ToolbarItem>
+                        <Dropdown
+                          position={DropdownPosition.right}
+                          toggle={
+                            <DropdownToggle onToggle={onDropdownToggle}>
+                              {"Action"}
+                            </DropdownToggle>
+                          }
+                          isOpen={isDropdownOpen}
+                          dropdownItems={props.dropdownItems}
+                        />
+                      </ToolbarItem>
+                    )}
+                  </ToolbarContent>
+                </Toolbar>
+              </LevelItem> */}
+            </Level>
+              <TextContent>
+                {/* <Text>HELLO</Text> */}
+                <Text>
+                  {props.subKey}
+                  {props.subKeyLinkProps && (
+                    <ExternalLink
+                      {...props.subKeyLinkProps}
+                      isInline
+                      className="pf-u-ml-md"
+                    />
+                  )}
+                </Text>
+              </TextContent>
+            {/* {props.lowerDropdownItems && (
+              <Dropdown
+                className="keycloak__user-federation__dropdown"
+                toggle={
+                  <DropdownToggle
+                    onToggle={() => onLowerDropdownToggle()}
+                    isPrimary
+                    id="ufToggleId"
                   >
-                    <BarsIcon />
-                  </Button>
-                </div>
-              )}
-              {logo && (
-                <LogoComponent className={css(styles.pageHeaderBrandLink)} {...logoProps}>
-                  {logo}
-                </LogoComponent>
-              )}
-              {isCrossConsole ? <CrossNavContextSelector 
-                  toggleText = {currentApp.name} 
-                  onToggle={this.onToggle}
-                  onSelect={this.onSelect}
-                  isOpen={isOpen}
-                  >
-                    {
-                      apps.map((app: CrossNavApp) => (<CrossNavContextSelectorItem key={app.id} app={app}>{app.name}</CrossNavContextSelectorItem>))
-                    }
-                </CrossNavContextSelector> : null
+                    {props.lowerDropdownMenuTitle}
+                  </DropdownToggle>
                 }
-              {topNav && <div className={css(styles.pageHeaderNav)}>{topNav}</div>}
-              {headerTools}
-            </header>
-          );
-        }}
-      </PageContextConsumer>
-    );
+                isOpen={isLowerDropdownOpen}
+                dropdownItems={props.lowerDropdownItems}
+              />
+            )} */}
+          </PageSection>
+          <Divider />
+        </>
+      );
   }
 };
